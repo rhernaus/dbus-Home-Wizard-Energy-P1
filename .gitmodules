@@ -1,0 +1,3 @@
+[submodule "dbus-systemcalc-py"]
+	path = dbus-systemcalc-py
+	url = https://github.com/victronenergy/dbus-systemcalc-py.git
