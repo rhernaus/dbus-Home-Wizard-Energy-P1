@@ -1,15 +1,11 @@
-# W.I.P. -> Converting from dbus-shelly-3em-smartmeter
-# dbus-home-wizzard-energy-p1
-Integrate Home Wizzard Energy P1 meter into [Victron Energies Venus OS](https://github.com/victronenergy/venus)
+# dbus-Home-Wizard-Energy-P1
+Integrate Home Wizard Energy P1 meter into [Victron Energy's Venus OS](https://github.com/victronenergy/venus)
 
 ## Purpose
-With the scripts in this repo it should be easy possible to install, uninstall, restart a service that connects the Shelly 3EM to the VenusOS and GX devices from Victron.
-Idea is pasend on @RalfZim project linked below.
-
-
+This service integrates the Home Wizard Energy P1 meter with Victron Energy's Venus OS and GX devices. It provides automatic detection of single-phase and three-phase meters, ensuring proper integration with the Victron system.
 
 ## Inspiration
-This project is my first on GitHub and with the Victron Venus OS, so I took some ideas and approaches from the following projects - many thanks for sharing the knowledge:
+This project builds on ideas and approaches from the following projects:
 - https://github.com/RalfZim/venus.dbus-fronius-smartmeter
 - https://github.com/victronenergy/dbus-smappee
 - https://github.com/Louisvdw/dbus-serialbattery
@@ -18,27 +14,24 @@ This project is my first on GitHub and with the Victron Venus OS, so I took some
 
 ## How it works
 ### My setup
-- Home Wizzard Energy P1 with latest firmware 
-  - 1 or 3-Phase installation (normal for Netherlands)
-  - Connected to Wifi network "A"
+- Home Wizard Energy P1 with latest firmware 
+  - Works with both single-phase and three-phase installations (automatically detected)
+  - Connected to WiFi network "A"
   - IP 192.168.2.13/24  
 - Victron Energy Cerbo GX with Venus OS - Firmware v3.11
   - No other devices from Victron connected (still waiting for shipment of Multiplus-2)
-  - Connected to Wifi network "A"
+  - Connected to WiFi network "A"
   - IP 192.168.2.20/24
 
 ### Details / Process
-As mentioned above the script is inspired by @RalfZim fronius smartmeter implementation.
-So what is the script doing:
-- Running as a service
-- connecting to DBus of the Venus OS `com.victronenergy.grid.http_40` or `com.victronenergy.pvinverter.http_40`
-- After successful DBus connection Home Wizzard P1 is accessed via REST-API - simply the /status is called and a JSON is returned with all details
-  A sample JSON file from Home Wizzard Energy P1 can be found [here](docs/home-wizzard-energy-p1.json)
-- Serial is taken from the response as device serial
-- Paths are added to the DBus with default value 0 - including some settings like name, etc
-- After that a "loop" is started which pulls Home Wizzard P1 data every 750ms from the REST-API and updates the values in the DBus
-
-Thats it 😄
+The service performs the following functions:
+- Runs as a background service
+- Connects to the Venus OS DBus as either `com.victronenergy.grid.http_40` or `com.victronenergy.pvinverter.http_40` (based on configuration)
+- Accesses the Home Wizard P1 meter via REST-API (at `/api/v1/data`) and receives JSON data with all energy metrics
+- Uses the unique_id from the response as the device serial number
+- Creates DBus paths with initial values and settings
+- Automatically detects if the meter is single-phase or three-phase based on the response data
+- Continuously polls the Home Wizard P1 meter API every 500ms and updates the DBus values
 
 ### Pictures
 ![Tile Overview](img/VenusOs_Overview.png)
@@ -46,54 +39,40 @@ Thats it 😄
 ![SmartMeter - Values](img/VenusOs_P1.png)
 ![SmartMeter - Device Details](img/VenusOs_Service.png)
 
-
-
-
 ## Install & Configuration
 ### Get the code
-Just grap a copy of the main branche and copy them to `/data/dbus-Home-Wizzard-Energy-P1`.
-After that call the install.sh script.
+Clone the repository and install it to `/data/dbus-Home-Wizard-Energy-P1`. Then run the installation script.
 
-The following script should do everything for you:
+The following commands will do everything for you:
 ```
-wget https://github.com/back2basic/dbus-Home-Wizzard-Energy-P1/archive/refs/heads/main.zip
-unzip main.zip "dbus-Home-Wizzard-Energy-P1-main/*" -d /data
-mv /data/dbus-Home-Wizzard-Energy-P1-main /data/dbus-Home-Wizzard-Energy-P1
-chmod a+x /data/dbus-Home-Wizzard-Energy-P1/install.sh
-/data/dbus-Home-Wizzard-Energy-P1/install.sh
+wget https://github.com/back2basic/dbus-Home-Wizard-Energy-P1/archive/refs/heads/main.zip
+unzip main.zip "dbus-Home-Wizard-Energy-P1-main/*" -d /data
+mv /data/dbus-Home-Wizard-Energy-P1-main /data/dbus-Home-Wizard-Energy-P1
+chmod a+x /data/dbus-Home-Wizard-Energy-P1/install.sh
+/data/dbus-Home-Wizard-Energy-P1/install.sh
 rm main.zip
 ```
-⚠️ Check configuration after that - because service is already installed an running and with wrong connection data (host, username, pwd) you will spam the log-file
+⚠️ Check the configuration after installation, as the service will start immediately with default settings.
 
 ### Change config.ini
-Within the project there is a file `/data/dbus-Home-Wizzard-Energy-P1/config.ini` - just change the values - most important is the host, username and password in section "ONPREMISE". More details below:
+Edit the configuration file at `/data/dbus-Home-Wizard-Energy-P1/config.ini`. The most important setting is the `Host` value in the `ONPREMISE` section.
 
-| Section  | Config vlaue | Explanation |
+| Section  | Config value | Explanation |
 | ------------- | ------------- | ------------- |
 | DEFAULT  | AccessType | Fixed value 'OnPremise' |
-| DEFAULT  | SignOfLifeLog  | Time in minutes how often a status is added to the log-file `current.log` with log-level INFO |
-| DEFAULT  | CustomName  | Name of your device - usefull if you want to run multiple versions of the script |
-| DEFAULT  | DeviceInstance  | DeviceInstanceNumber e.g. 40 |
-| DEFAULT  | Role | Fixed value:  'GRID' |
-| DEFAULT  | Position | Fixed value: 0 = AC|
-| DEFAULT  | LogLevel  | Define the level of logging - lookup: https://docs.python.org/3/library/logging.html#levels |
-| DEFAULT  | Phases  | 1 for 1 phase system / 3 for 3 phase system |
-| ONPREMISE  | Host | IP or hostname of on-premise Shelly 3EM web-interface |
-<!-- | ONPREMISE  | Username | Username for htaccess login - leave blank if no username/password required |
-| ONPREMISE  | Password | Password for htaccess login - leave blank if no username/password required |
-| ONPREMISE  | L1Position | Which input on the Shelly in 3-phase grid is supplying a single Multi | -->
-
-
-<!-- ### Remapping L1
-In a 3-phase grid with a single Multi, Venus OS expects L1 to be supplying the only Multi. This is not always the case. If for example your Multi is supplied by L3 (Input `C` on the Shelly) your GX device will show AC Loads as consuming from both L1 and L3. Setting `L1Position` to the appropriate Shelly input allows for remapping the phases and showing correct data on the GX device.
-
-If your single Multi is connected to the Input `A` on the Shelly you don't need to change this setting. Setting `L1Position` to `2` would swap the `B` CT & Voltage sensors data on the Shelly with the `A` CT & Voltage sensors data on the Shelly. Respectively, setting `L1Position` to `3` would swap `A` and `C` inputs. -->
+| DEFAULT  | SignOfLifeLog  | Time in minutes between status log entries in `current.log` |
+| DEFAULT  | CustomName  | Name of your device - useful when running multiple instances |
+| DEFAULT  | DeviceInstance  | Device instance number (e.g., 40) |
+| DEFAULT  | Role | Value: 'grid' or 'pvinverter' based on desired integration |
+| DEFAULT  | Position | Position value: 0 = AC, 1 = AC-Out 1, 2 = AC-Out 2 |
+| DEFAULT  | LogLevel  | Logging level - see: https://docs.python.org/3/library/logging.html#levels |
+| ONPREMISE  | Host | IP address or hostname of the Home Wizard Energy P1 meter |
 
 ## Used documentation
-- https://github.com/victronenergy/venus/wiki/dbus#grid   DBus paths for Victron namespace GRID
-- https://github.com/victronenergy/venus/wiki/dbus#pv-inverters   DBus paths for Victron namespace PVINVERTER
-- https://github.com/victronenergy/venus/wiki/dbus-api   DBus API from Victron
-- https://www.victronenergy.com/live/ccgx:root_access   How to get root access on GX device/Venus OS
+- https://github.com/victronenergy/venus/wiki/dbus#grid - DBus paths for Victron namespace GRID
+- https://github.com/victronenergy/venus/wiki/dbus#pv-inverters - DBus paths for Victron namespace PVINVERTER
+- https://github.com/victronenergy/venus/wiki/dbus-api - DBus API from Victron
+- https://www.victronenergy.com/live/ccgx:root_access - How to get root access on GX device/Venus OS
 
 ## Discussions on the web
 This module/repository has been posted on the following threads:
