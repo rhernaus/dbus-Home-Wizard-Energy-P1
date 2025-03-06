@@ -39,7 +39,7 @@ Clone the repository and install it to `/data/dbus-Home-Wizard-Energy-P1`. Then 
 
 The following commands will do everything for you:
 ```
-wget https://github.com/back2basic/dbus-Home-Wizard-Energy-P1/archive/refs/heads/main.zip
+wget https://github.com/rhernaus/dbus-Home-Wizard-Energy-P1/archive/refs/heads/main.zip
 unzip main.zip "dbus-Home-Wizard-Energy-P1-main/*" -d /data
 mv /data/dbus-Home-Wizard-Energy-P1-main /data/dbus-Home-Wizard-Energy-P1
 chmod a+x /data/dbus-Home-Wizard-Energy-P1/manage.sh
@@ -130,19 +130,19 @@ The tests verify the correct detection of single-phase and three-phase meters ba
 To check how much of the code is covered by tests, you can use pytest-cov:
 
 ```
-PYTHONPATH=$PYTHONPATH:./dbus-systemcalc-py:./dbus-systemcalc-py/ext/velib_python python -m pytest tests/ --cov=dbus_home_wizard_energy_p1
+PYTHONPATH=$PYTHONPATH:./dbus-systemcalc-py:./dbus-systemcalc-py/ext/velib_python python -m pytest tests/ --cov=homewizard_energy
 ```
 
 For a more detailed report showing which lines are not covered:
 
 ```
-PYTHONPATH=$PYTHONPATH:./dbus-systemcalc-py:./dbus-systemcalc-py/ext/velib_python python -m pytest tests/ --cov=dbus_home_wizard_energy_p1 --cov-report=term-missing
+PYTHONPATH=$PYTHONPATH:./dbus-systemcalc-py:./dbus-systemcalc-py/ext/velib_python python -m pytest tests/ --cov=homewizard_energy --cov-report=term-missing
 ```
 
 To generate an HTML coverage report:
 
 ```
-PYTHONPATH=$PYTHONPATH:./dbus-systemcalc-py:./dbus-systemcalc-py/ext/velib_python python -m pytest tests/ --cov=dbus_home_wizard_energy_p1 --cov-report=html
+PYTHONPATH=$PYTHONPATH:./dbus-systemcalc-py:./dbus-systemcalc-py/ext/velib_python python -m pytest tests/ --cov=homewizard_energy --cov-report=html
 ```
 
 This will create an `htmlcov` directory with an interactive HTML report that can be viewed in a browser.
