@@ -77,33 +77,31 @@ git submodule update --init --recursive
 The installation script handles this automatically.
 
 ### Change config.yaml
-Edit the configuration file at `/data/dbus-Home-Wizard-Energy-P1/config.yaml`. The most important setting is the `host` value in the `onPremise` section.
+Edit the configuration file at `/data/dbus-Home-Wizard-Energy-P1/config.yaml`. The most important setting is the `host` entry.
 
 ```yaml
-# Default settings
-default:
-  # Access type (currently only OnPremise is supported)
-  accessType: OnPremise
+# Home Wizard Energy P1 Configuration
 
-  # Time in minutes between status log entries
-  signOfLifeLog: 1
+# Time in minutes between heartbeat messages in log
+heartbeat: 1
 
-  # Name of your device
-  customName: Home Wizard Energy P1
+# Name of your device - useful when running multiple instances
+customName: Home Wizard Energy P1
 
-  # Role: grid or pvinverter
-  role: grid
+# Role: grid or pvinverter
+role: grid
 
-  # Position value: 0 = AC, 1 = AC-Out 1, 2 = AC-Out 2
-  position: 0
+# Position value: 0 = AC, 1 = AC-Out 1, 2 = AC-Out 2
+position: 0
 
-  # Logging level: DEBUG, INFO, WARNING, ERROR, CRITICAL
-  logLevel: ERROR
+# Device instance number (e.g., 40)
+deviceInstance: 40
 
-# On-premise connection settings
-onPremise:
-  # IP address or hostname of the meter
-  host: 10.20.31.10
+# Logging level: DEBUG, INFO, WARNING, ERROR, CRITICAL
+logLevel: ERROR
+
+# IP address or hostname of the Home Wizard Energy P1 meter
+host: 10.20.31.10
 ```
 
 ## Used documentation

@@ -1,34 +1,30 @@
 # Home Wizard Energy P1 Configuration
 
-# Default settings
-default:
-  # Access type (currently only OnPremise is supported)
-  accessType: OnPremise
+# Time in minutes between heartbeat messages in log
+heartbeat: 1
 
-  # Time in minutes between status log entries in current.log
-  signOfLifeLog: 1
+# Name of your device - useful when running multiple instances
+customName: Home Wizard Energy P1
 
-  # Name of your device - useful when running multiple instances
-  customName: Home Wizard Energy P1
+# Role could be:
+# - pvinverter: for PV inverter integration
+# - grid: for grid meter integration
+role: grid
 
-  # Role could be:
-  # - pvinverter: for PV inverter integration
-  # - grid: for grid meter integration
-  role: grid
+# Available positions:
+# - 0: AC
+# - 1: AC-Out 1
+# - 2: AC-Out 2
+# P1 should always be 0
+position: 0
 
-  # Available positions:
-  # - 0: AC
-  # - 1: AC-Out 1
-  # - 2: AC-Out 2
-  # P1 should always be 0
-  position: 0
+# Device instance number (e.g., 40)
+deviceInstance: 40
 
-  # Logging level
-  # Available values: DEBUG, INFO, WARNING, ERROR, CRITICAL
-  # See: https://docs.python.org/3/library/logging.html#levels
-  logLevel: ERROR
+# Logging level
+# Available values: DEBUG, INFO, WARNING, ERROR, CRITICAL
+# See: https://docs.python.org/3/library/logging.html#levels
+logLevel: ERROR
 
-# On-premise connection settings
-onPremise:
-  # IP address or hostname of the Home Wizard Energy P1 meter
-  host: 10.20.31.10
+# IP address or hostname of the Home Wizard Energy P1 meter
+host: 10.20.31.10
