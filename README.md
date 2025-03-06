@@ -76,19 +76,35 @@ git submodule update --init --recursive
 
 The installation script handles this automatically.
 
-### Change config.ini
-Edit the configuration file at `/data/dbus-Home-Wizard-Energy-P1/config.ini`. The most important setting is the `Host` value in the `ONPREMISE` section.
+### Change config.yaml
+Edit the configuration file at `/data/dbus-Home-Wizard-Energy-P1/config.yaml`. The most important setting is the `host` value in the `onPremise` section.
 
-| Section  | Config value | Explanation |
-| ------------- | ------------- | ------------- |
-| DEFAULT  | AccessType | Fixed value 'OnPremise' |
-| DEFAULT  | SignOfLifeLog  | Time in minutes between status log entries in `current.log` |
-| DEFAULT  | CustomName  | Name of your device - useful when running multiple instances |
-| DEFAULT  | DeviceInstance  | Device instance number (e.g., 40) |
-| DEFAULT  | Role | Value: 'grid' or 'pvinverter' based on desired integration |
-| DEFAULT  | Position | Position value: 0 = AC, 1 = AC-Out 1, 2 = AC-Out 2 |
-| DEFAULT  | LogLevel  | Logging level - see: https://docs.python.org/3/library/logging.html#levels |
-| ONPREMISE  | Host | IP address or hostname of the Home Wizard Energy P1 meter |
+```yaml
+# Default settings
+default:
+  # Access type (currently only OnPremise is supported)
+  accessType: OnPremise
+
+  # Time in minutes between status log entries
+  signOfLifeLog: 1
+
+  # Name of your device
+  customName: Home Wizard Energy P1
+
+  # Role: grid or pvinverter
+  role: grid
+
+  # Position value: 0 = AC, 1 = AC-Out 1, 2 = AC-Out 2
+  position: 0
+
+  # Logging level: DEBUG, INFO, WARNING, ERROR, CRITICAL
+  logLevel: ERROR
+
+# On-premise connection settings
+onPremise:
+  # IP address or hostname of the meter
+  host: 10.20.31.10
+```
 
 ## Used documentation
 - https://github.com/victronenergy/venus/wiki/dbus#grid - DBus paths for Victron namespace GRID
