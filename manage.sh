@@ -50,11 +50,28 @@ install_service() {
     grep -qxF "$SCRIPT_DIR/manage.sh install" $filename || echo "$SCRIPT_DIR/manage.sh install" >> $filename
     echo "Installation complete. Service should start automatically."
 
-    # Initialize git submodules if they're not already initialized
-    if [ ! -f $SCRIPT_DIR/dbus-systemcalc-py/ext/velib_python/vedbus.py ]; then
-        echo "Initializing git submodules..."
-        cd $SCRIPT_DIR
-        git submodule update --init --recursive
+    # Check for Venus OS environment
+    if [ -d /opt/victronenergy/dbus-systemcalc-py/ext/velib_python ]; then
+        echo "Venus OS detected, using system velib_python module."
+
+        # Create symlinks to the system velib_python modules
+        mkdir -p $SCRIPT_DIR/dbus-systemcalc-py/ext
+        ln -sf /opt/victronenergy/dbus-systemcalc-py/ext/velib_python $SCRIPT_DIR/dbus-systemcalc-py/ext/
+        echo "Created symlink to system velib_python module."
+    else
+        # Not on Venus OS, try to initialize git submodules
+        if [ ! -f $SCRIPT_DIR/dbus-systemcalc-py/ext/velib_python/vedbus.py ]; then
+            echo "Initializing git submodules..."
+
+            # Check if git is available
+            if command -v git &> /dev/null; then
+                cd $SCRIPT_DIR
+                git submodule update --init --recursive
+            else
+                echo "WARNING: git not found. Cannot initialize submodules."
+                echo "Please manually ensure the required modules are available."
+            fi
+        fi
     fi
 }
 

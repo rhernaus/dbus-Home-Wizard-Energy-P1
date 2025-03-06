@@ -66,15 +66,21 @@ The installation comes with a management script that provides several commands:
 ./manage.sh uninstall
 ```
 
-### Initialize git submodules
-The service depends on the `vedbus` module which is provided by a git submodule. If you're installing the code manually (not using the installation script), you'll need to initialize the submodules:
+### Venus OS Compatibility
+
+When installing on Venus OS, the service will automatically detect the operating system and use the system's built-in velib_python module (`/opt/victronenergy/dbus-systemcalc-py/ext/velib_python`). No git installation or submodule initialization is required.
+
+For other environments, the installation script will attempt to initialize the git submodules if git is available.
+
+### Initialize git submodules (non-Venus OS environments only)
+The service depends on the `vedbus` module which is provided by a git submodule. If you're installing on a system other than Venus OS, you'll need to have git installed and initialize the submodules:
 
 ```
 cd /data/dbus-Home-Wizard-Energy-P1
 git submodule update --init --recursive
 ```
 
-The installation script handles this automatically.
+The installation script will attempt to do this automatically if git is available.
 
 ### Change config.yaml
 Edit the configuration file at `/data/dbus-Home-Wizard-Energy-P1/config.yaml`. The most important setting is the `host` entry.
