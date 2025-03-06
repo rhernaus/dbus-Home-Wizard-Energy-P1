@@ -1,24 +1,22 @@
 #!/usr/bin/env python
 """
-Integration tests for DbusHomeWizzardEnergyP1Service.
-These tests subclass the service to override _getP1Data.
+Integration tests for Home Wizard Energy P1 meter integration.
 """
 
-import unittest
-import time
-import logging
 import os
 import sys
+import unittest
 
-# Add the parent directory to Python path 
+# Add the parent directory to Python path
 sys.path.insert(1, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-# Now import the main module
-from dbus_home_wizard_energy_p1 import DbusHomeWizzardEnergyP1Service
+# Import the refactored code
+from homewizard_energy.meter_client import HomeWizardP1Client
 
-class TestDbusHomeWizzardEnergyP1Service(unittest.TestCase):
-    """Tests for the DBus Home Wizzard Energy P1 Service."""
-    
+
+class TestHomeWizardP1Client(unittest.TestCase):
+    """Tests for the Home Wizard P1 client."""
+
     def test_detect_single_phase(self):
         """Test that single-phase meters are correctly detected based on JSON data."""
         # Single-phase meter data (no keys for L2 and L3 voltage)
@@ -30,9 +28,9 @@ class TestDbusHomeWizzardEnergyP1Service(unittest.TestCase):
             'total_power_import_kwh': 5000,
             'total_power_export_kwh': 100
         }
-        
-        # Use the static method from the service class
-        self.assertFalse(DbusHomeWizzardEnergyP1Service.is_three_phase_meter(meter_data))
+
+        # Use the static method from the client class
+        self.assertFalse(HomeWizardP1Client.is_three_phase_meter(meter_data))
 
     def test_detect_three_phase(self):
         """Test that three-phase meters are correctly detected based on JSON data."""
@@ -51,11 +49,11 @@ class TestDbusHomeWizzardEnergyP1Service(unittest.TestCase):
             'total_power_import_kwh': 15000,
             'total_power_export_kwh': 300
         }
-        
-        # Use the static method from the service class
-        self.assertTrue(DbusHomeWizzardEnergyP1Service.is_three_phase_meter(meter_data))
+
+        # Use the static method from the client class
+        self.assertTrue(HomeWizardP1Client.is_three_phase_meter(meter_data))
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.DEBUG)
     unittest.main()
+

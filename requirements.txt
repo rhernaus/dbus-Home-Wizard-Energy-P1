@@ -1,3 +1,7 @@
 requests>=2.28.2
 dbus-python>=1.2.18
-vedbus>=0.1.0
+# vedbus is provided by the git submodule at dbus-systemcalc-py/ext/velib_python
+pytest>=8.3.4
+PyGObject>=3.42.0
+pytest-cov>=6.0.0
+typing-extensions>=4.7.0

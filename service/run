@@ -1,3 +1,4 @@
 #!/bin/sh
 exec 2>&1
-python /data/dbus-Home-Wizzard-Energy-P1/dbus_home_wizard_energy_p1.py
+cd /data/dbus-Home-Wizard-Energy-P1
+exec /usr/bin/python3 /data/dbus-Home-Wizard-Energy-P1/dbus_homewizard_p1.py

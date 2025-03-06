@@ -1,0 +1,11 @@
+---
+description: This is the project's tech stack
+globs: 
+alwaysApply: false
+---
+# Technical stack
+
+- Python for the backend
+- No frontend is needed
+- No database is needed
+- Python tests

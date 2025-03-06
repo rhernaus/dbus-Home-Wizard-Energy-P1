@@ -14,10 +14,10 @@ This project builds on ideas and approaches from the following projects:
 
 ## How it works
 ### My setup
-- Home Wizard Energy P1 with latest firmware 
+- Home Wizard Energy P1 with latest firmware
   - Works with both single-phase and three-phase installations (automatically detected)
   - Connected to WiFi network "A"
-  - IP 192.168.2.13/24  
+  - IP 192.168.2.13/24
 - Victron Energy Cerbo GX with Venus OS - Firmware v3.11
   - No other devices from Victron connected (still waiting for shipment of Multiplus-2)
   - Connected to WiFi network "A"
@@ -33,12 +33,6 @@ The service performs the following functions:
 - Automatically detects if the meter is single-phase or three-phase based on the response data
 - Continuously polls the Home Wizard P1 meter API every 500ms and updates the DBus values
 
-### Pictures
-![Tile Overview](img/VenusOs_Overview.png)
-![Remote Console - Overview](img/VenusOs_DeviceList.png) 
-![SmartMeter - Values](img/VenusOs_P1.png)
-![SmartMeter - Device Details](img/VenusOs_Service.png)
-
 ## Install & Configuration
 ### Get the code
 Clone the repository and install it to `/data/dbus-Home-Wizard-Energy-P1`. Then run the installation script.
@@ -48,11 +42,39 @@ The following commands will do everything for you:
 wget https://github.com/back2basic/dbus-Home-Wizard-Energy-P1/archive/refs/heads/main.zip
 unzip main.zip "dbus-Home-Wizard-Energy-P1-main/*" -d /data
 mv /data/dbus-Home-Wizard-Energy-P1-main /data/dbus-Home-Wizard-Energy-P1
-chmod a+x /data/dbus-Home-Wizard-Energy-P1/install.sh
-/data/dbus-Home-Wizard-Energy-P1/install.sh
+chmod a+x /data/dbus-Home-Wizard-Energy-P1/manage.sh
+/data/dbus-Home-Wizard-Energy-P1/manage.sh install
 rm main.zip
 ```
 ⚠️ Check the configuration after installation, as the service will start immediately with default settings.
+
+### Managing the Service
+
+The installation comes with a management script that provides several commands:
+
+```
+# Install the service
+./manage.sh install
+
+# Restart the service
+./manage.sh restart
+
+# Check service status
+./manage.sh status
+
+# Uninstall the service
+./manage.sh uninstall
+```
+
+### Initialize git submodules
+The service depends on the `vedbus` module which is provided by a git submodule. If you're installing the code manually (not using the installation script), you'll need to initialize the submodules:
+
+```
+cd /data/dbus-Home-Wizard-Energy-P1
+git submodule update --init --recursive
+```
+
+The installation script handles this automatically.
 
 ### Change config.ini
 Edit the configuration file at `/data/dbus-Home-Wizard-Energy-P1/config.ini`. The most important setting is the `Host` value in the `ONPREMISE` section.
@@ -77,3 +99,50 @@ Edit the configuration file at `/data/dbus-Home-Wizard-Energy-P1/config.ini`. Th
 ## Discussions on the web
 This module/repository has been posted on the following threads:
 - https://community.victronenergy.com/questions/238117/home-wizzard-energy-p1-meter-in-venusos.html
+
+## Running Tests
+To run the tests for this project, follow these steps:
+
+1. Create a Python virtual environment:
+   ```
+   python3 -m venv test_venv
+   ```
+
+2. Activate the virtual environment:
+   ```
+   source test_venv/bin/activate
+   ```
+
+3. Install the required dependencies:
+   ```
+   pip install -r requirements.txt
+   ```
+
+4. Run the tests with the correct Python path to include the git submodules:
+   ```
+   PYTHONPATH=$PYTHONPATH:./dbus-systemcalc-py:./dbus-systemcalc-py/ext/velib_python python -m pytest tests/
+   ```
+
+The tests verify the correct detection of single-phase and three-phase meters based on the JSON data from the Home Wizard Energy P1 meter.
+
+### Checking Code Coverage
+
+To check how much of the code is covered by tests, you can use pytest-cov:
+
+```
+PYTHONPATH=$PYTHONPATH:./dbus-systemcalc-py:./dbus-systemcalc-py/ext/velib_python python -m pytest tests/ --cov=dbus_home_wizard_energy_p1
+```
+
+For a more detailed report showing which lines are not covered:
+
+```
+PYTHONPATH=$PYTHONPATH:./dbus-systemcalc-py:./dbus-systemcalc-py/ext/velib_python python -m pytest tests/ --cov=dbus_home_wizard_energy_p1 --cov-report=term-missing
+```
+
+To generate an HTML coverage report:
+
+```
+PYTHONPATH=$PYTHONPATH:./dbus-systemcalc-py:./dbus-systemcalc-py/ext/velib_python python -m pytest tests/ --cov=dbus_home_wizard_energy_p1 --cov-report=html
+```
+
+This will create an `htmlcov` directory with an interactive HTML report that can be viewed in a browser.
